@@ -28,13 +28,12 @@
             this.markup.today = "today";
             this.markup.dayArea = "dayArea";
             this.elementTag = 'calendar';
-            this.targetInput = '#hbdsdf';
+            this.targetInput = '.date-picker';
             this.init = false;
             this.buildDOM();
             this.selectDate(this.date.today.getFullYear(),this.date.today.getMonth(),this.date.today.getDate())
             this.constructDayArea();
             this.updateInput('Birth date','','');
-
 
             t = this;
             $(document).ready(function(){
@@ -85,13 +84,34 @@
 
         }
         Cal.prototype.wd = function(wd) {
-            if(wd==0) return 7
             return wd
         }
         Cal.prototype.buildDOM = function() {
-            html = "<div class='clear "+this.elementTag+"'>\n<div class='view'>\n<div class='head'>\n<div class='title'><span class='m'></span> <span class='y'></span></div>\n</div>\n";
-            html += "<div class='row th'>\n<div class='C'>M</div>\n<div class='C'>T</div>\n<div class='C'>W</div>\n<div class='C'>T</div>\n<div class='C'>F</div>\n<div class='C'>S</div>\n<div class='C'>S</div>\n</div>\n<div class='"+this.markup.dayArea+"'>\n";
-            html += "</div>\n\n<div class='row nav'>\n\n<i class='btn prev prev-year fa fa-fast-backward'></i>\n<i class='btn prev prev-month fa fa-play fa-flip-horizontal'></i>\n<i class='btn next next-month fa fa-play'></i>\n<i class='btn next next-year fa fa-fast-forward'></i>\n</div>\n</div>\n</div>\n";
+            html = "<div class='clear "+this.elementTag+"'>" +
+              "<div class='view'>" +
+              "<div class='head'>" +
+              "<div class='title'><span class='m'></span> <span class='y'></span></div>" +
+            "</div>";
+            html += "<div class='row th'>" +
+              "<div class='C'>M</div>" +
+              "<div class='C'>T</div>" +
+              "<div class='C'>W</div>" +
+              "<div class='C'>T</div>" +
+              "<div class='C'>F</div>" +
+              "<div class='C'>S</div>" +
+              "<div class='C'>S</div>" +
+            "</div>" +
+            "<div class='"+this.markup.dayArea+"'>";
+
+            html += "</div>" +
+            "<div class='row nav'>" +
+            "<i class='btn prev prev-year fa fa-fast-backward'></i>" +
+            "<i class='btn prev prev-month fa fa-play fa-flip-horizontal'></i>" +
+            "<i class='btn next next-month fa fa-play'></i>" +
+            "<i class='btn next next-year fa fa-fast-forward'></i>" +
+            "</div>" +
+            "</div>" +
+            "</div>";
             $(html).insertAfter(this.targetInput);
             $(this.targetInput).css('cursor','pointer');
             this.hide(0);
@@ -110,21 +130,12 @@
 
             monthBgnWd = this.wd(monthBgnDate.getUTCDay());
             itrBgn = monthBgnDate.getTime()-(monthBgnWd-1)*1000*60*60*24;
-            /*itrEnd = monthEnd;
-            i = 0;
-            while(this.wd(new Date(itrEnd).getUTCDay())!=7) {
-                itrEnd += 1000*60*60*24;
-                i = i+1;
-                if(i>10) break;
-            }*/
-
-
 
             i = 1;
             n = 0;
             dayItr = itrBgn;
             newViewContent += "<div class='"+this.markup.row+"'>\n";
-            while(n<42) {
+            while(n<35) {
                 cls = new Array("C",this.markup.cell);
                 if(dayItr<=monthBgn) cls.push(this.markup.inactive,"jump-to-previous-month");
                 else if(dayItr>=monthEnd+1000*60*60*36) cls.push(this.markup.inactive,"jump-to-next-month");
