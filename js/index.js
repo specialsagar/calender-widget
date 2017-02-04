@@ -50,63 +50,8 @@
             this.targetInput = '.date-picker';
             this.init = false;
             this.selectDate(this.date.today.getFullYear(),this.date.today.getMonth(),this.date.today.getDate());
+            this.updateInput('','','');
             this.buildYearDOM();
-
-            t = this;
-            $(document).ready(function(){
-                $(document).click(function(ms){
-                    e = $('.'+t.elementTag+' .view');
-                    eco = e.offset();
-                    if(ms.pageX<eco.left || ms.pageX>eco.left+e.width() || ms.pageY<eco.top || ms.pageY>eco.top+e.height()) {
-                        if(!t.init) t.hide(300);
-                    }
-                });
-                $(document).on('click','.next-month',function(){
-                    t.setMonthNext();
-                });
-                $(document).on('click','.prev-month',function(){
-                    t.setMonthPrev();
-                });
-                $(document).on('click','.next-year',function(){
-                    t.setYearNext();
-                });
-                $(document).on('click','.prev-year',function(){
-                    t.setYearPrev();
-                });
-
-                $(document).on('click','.jump-to-next-month',function(){
-                    t.setMonthNext();
-                });
-                $(document).on('click','.jump-to-previous-month',function(){
-                    t.setMonthPrev();
-                });
-
-                $(document).on('click','.'+t.markup.currentMonth,function(){
-                    d = t.selectDate(t.date.browse.getUTCFullYear(),t.date.browse.getUTCMonth(),$(this).html());
-                    t.hide(300);
-                });
-
-                $(document).on('click','.'+t.markup.currentYear,function(){
-                    t.date.browse = new Date($(this).html(),0,1);
-                    t.buildMonthDOM();
-                    t.constructDayArea(true);
-                    t.show(100);
-                });
-
-                $(document).on('click','.title.month-title',function(){
-                    t.date.browse = new Date(t.date.today.getTime());
-                    t.constructDayArea(false);
-                });
-
-
-                $(t.targetInput).focus(function(){
-                    t.show(100);
-                    $(this).blur();
-                });
-
-            });
-
-
         }
         Cal.prototype.wd = function(wd) {
             return wd
@@ -333,3 +278,51 @@
 
         var c = new Cal();
         generateYearData(10);
+
+        $(document).ready(function(){
+
+            $(document).on('click','.next-month',function(){
+                c.setMonthNext();
+            });
+            $(document).on('click','.prev-month',function(){
+                c.setMonthPrev();
+            });
+            $(document).on('click','.next-year',function(){
+                c.setYearNext();
+            });
+            $(document).on('click','.prev-year',function(){
+                c.setYearPrev();
+            });
+
+            $(document).on('click','.jump-to-next-month',function(){
+                c.setMonthNext();
+            });
+            $(document).on('click','.jump-to-previous-month',function(){
+                c.setMonthPrev();
+            });
+
+            $(document).on('click','.'+c.markup.currentMonth,function(){
+                c.selectDate(c.date.browse.getUTCFullYear(),c.date.browse.getUTCMonth(),$(this).html());
+                c.hide(300);
+            });
+
+            $(document).on('click','.'+c.markup.currentYear,function(){
+                c.date.browse = new Date($(this).html(),0,1);
+                c.buildMonthDOM();
+                c.constructDayArea(true);
+                c.show(100);
+            });
+
+            $(document).on('click','.title.month-title',function(){
+              $(".clear."+c.elementTag).remove();
+              c.buildYearDOM();
+              c.show(400);
+            });
+
+
+            $(c.targetInput).focus(function(){
+                c.show(100);
+                $(this).blur();
+            });
+
+        });
