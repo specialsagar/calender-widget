@@ -61,38 +61,39 @@
                         if(!t.init) t.hide(300);
                     }
                 });
-                $('.'+t.elementTag).on('click','.next-month',function(){
+                $(document).on('click','.next-month',function(){
                     t.setMonthNext();
                 });
-                $('.'+t.elementTag).on('click','.prev-month',function(){
+                $(document).on('click','.prev-month',function(){
                     t.setMonthPrev();
                 });
-                $('.'+t.elementTag).on('click','.next-year',function(){
+                $(document).on('click','.next-year',function(){
                     t.setYearNext();
                 });
-                $('.'+t.elementTag).on('click','.prev-year',function(){
+                $(document).on('click','.prev-year',function(){
                     t.setYearPrev();
                 });
 
-                $('.'+t.elementTag).on('click','.jump-to-next-month',function(){
+                $(document).on('click','.jump-to-next-month',function(){
                     t.setMonthNext();
                 });
-                $('.'+t.elementTag).on('click','.jump-to-previous-month',function(){
+                $(document).on('click','.jump-to-previous-month',function(){
                     t.setMonthPrev();
                 });
 
-                $('.'+t.elementTag).on('click','.'+t.markup.currentMonth,function(){
+                $(document).on('click','.'+t.markup.currentMonth,function(){
                     d = t.selectDate(t.date.browse.getUTCFullYear(),t.date.browse.getUTCMonth(),$(this).html());
                     t.hide(300);
                 });
 
-                $('.'+t.elementTag).on('click','.'+t.markup.currentYear,function(){
+                $(document).on('click','.'+t.markup.currentYear,function(){
                     t.date.browse = new Date($(this).html(),0,1);
                     t.buildMonthDOM();
-                    t.constructDayArea(false);
+                    t.constructDayArea(true);
+                    t.show(100);
                 });
 
-                $('.'+t.elementTag).on('click','.title.month-title',function(){
+                $(document).on('click','.title.month-title',function(){
                     t.date.browse = new Date(t.date.today.getTime());
                     t.constructDayArea(false);
                 });
@@ -111,7 +112,7 @@
             return wd
         }
         Cal.prototype.buildMonthDOM = function() {
-            $(".clear").remove();
+            $(".clear."+this.elementTag).remove();
             html = "<div class='clear "+this.elementTag+"'>" +
               "<div class='view'>" +
               "<div class='head'>" +
