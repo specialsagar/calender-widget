@@ -13,7 +13,25 @@
             10: "November",
             11: "December"
         }
+        // define the number of years you want to display from start
+        var lengthOfPreviousYears = 10;
+        var lengthOfFutureYears = 10;
+        var years = {};
 
+        function generateYearData() {
+          var currentYear = new Date().getFullYear();
+          var startYear = currentYear - lengthOfPreviousYears;
+          var i = 0;
+          for(i; i<lengthOfPreviousYears; i++){
+              years[i] = startYear;
+              startYear++;
+          }
+          for(var j = 0; j<lengthOfFutureYears; j++, i++){
+            years[i] = startYear;
+            startYear++;
+          }
+        }
+        generateYearData();
         function Cal() {
             this.date = {};
             this.markup = {};
@@ -24,16 +42,15 @@
             this.markup.cell = "cell";
             this.markup.inactive = "g";
             this.markup.currentMonth = "mn";
+            this.markup.currentYear = "yy"
             this.markup.slctd = "slctd";
             this.markup.today = "today";
             this.markup.dayArea = "dayArea";
             this.elementTag = 'calendar';
             this.targetInput = '.date-picker';
             this.init = false;
-            this.buildDOM();
-            this.selectDate(this.date.today.getFullYear(),this.date.today.getMonth(),this.date.today.getDate())
-            this.constructDayArea();
-            this.updateInput('Birth date','','');
+            this.selectDate(this.date.today.getFullYear(),this.date.today.getMonth(),this.date.today.getDate());
+            this.buildYearDOM();
 
             t = this;
             $(document).ready(function(){
@@ -69,10 +86,17 @@
                     t.hide(300);
                 });
 
-                $('.'+t.elementTag).on('click','.title',function(){
+                $('.'+t.elementTag).on('click','.'+t.markup.currentYear,function(){
+                    t.date.browse = new Date($(this).html(),0,1);
+                    t.buildMonthDOM();
+                    t.constructDayArea(false);
+                });
+
+                $('.'+t.elementTag).on('click','.title.month-title',function(){
                     t.date.browse = new Date(t.date.today.getTime());
                     t.constructDayArea(false);
                 });
+
 
                 $(t.targetInput).focus(function(){
                     t.show(100);
@@ -86,11 +110,12 @@
         Cal.prototype.wd = function(wd) {
             return wd
         }
-        Cal.prototype.buildDOM = function() {
+        Cal.prototype.buildMonthDOM = function() {
+            $(".clear").remove();
             html = "<div class='clear "+this.elementTag+"'>" +
               "<div class='view'>" +
               "<div class='head'>" +
-              "<div class='title'><span class='m'></span> <span class='y'></span></div>" +
+              "<div class='title month-title'><span class='m'></span> <span class='y'></span></div>" +
             "</div>";
             html += "<div class='row th'>" +
               "<div class='C'>M</div>" +
@@ -116,7 +141,66 @@
             $(this.targetInput).css('cursor','pointer');
             this.hide(0);
         }
+        Cal.prototype.buildYearDOM = function() {
+            html = "<div class='clear "+this.elementTag+"'>" +
+              "<div class='view'>" +
+              "<div class='head'>";
+
+            for(var i=0; i < Object.keys(years).length; i++) {
+              html+= "<div class='title year-title'><span class='yy'>" + years[i] + "</span></div>";
+            }
+
+            html+= "</div>";
+            $(html).insertAfter(this.targetInput);
+            $(this.targetInput).css('cursor','pointer');
+            this.hide(0);
+        }
         Cal.prototype.constructDayArea = function(flipDirection) {
+            newViewContent = "";
+            wd = this.wd(this.date.browse.getUTCDay());
+            d = this.date.browse.getUTCDate();
+            m = this.date.browse.getUTCMonth();
+            y = this.date.browse.getUTCFullYear();
+
+            monthBgnDate = new Date(y,m,1);
+            monthBgn = monthBgnDate.getTime();
+            monthEndDate = new Date(this.getMonthNext().getTime()-1000*60*60*24);
+            monthEnd = monthEndDate.getTime();
+
+            monthBgnWd = this.wd(monthBgnDate.getUTCDay());
+            itrBgn = monthBgnDate.getTime()-(monthBgnWd-1)*1000*60*60*24;
+
+            i = 1;
+            n = 0;
+            dayItr = itrBgn;
+            newViewContent += "<div class='"+this.markup.row+"'>\n";
+            while(n<35) {
+                cls = new Array("C",this.markup.cell);
+                if(dayItr<=monthBgn) cls.push(this.markup.inactive,"jump-to-previous-month");
+                else if(dayItr>=monthEnd+1000*60*60*36) cls.push(this.markup.inactive,"jump-to-next-month");
+                else cls.push(this.markup.currentMonth);
+                if(dayItr==this.date.slctd.getTime()+1000*60*60*24) cls.push(this.markup.slctd);
+                if(dayItr==this.date.today.getTime()+1000*60*60*24) cls.push(this.markup.today);
+
+                date = new Date(dayItr);
+                newViewContent += "<div class='"+cls.join(" ")+"'>"+date.getUTCDate()+"</div>\n";
+                i += 1;
+                if(i>7) {
+                    i = 1;
+                    newViewContent += "</div>\n<div class='"+this.markup.row+"'>\n";
+                }
+                n += 1;
+                dayItr = dayItr+1000*60*60*24;
+            }
+            newViewContent += "</div>\n";
+
+
+            this.changePage(newViewContent,flipDirection);
+            $('.'+this.elementTag+' .title .m').html(monthNames[m]);
+            $('.'+this.elementTag+' .title .y').html(y);
+            return newViewContent;
+        }
+        Cal.prototype.constructYearArea = function(flipDirection) {
             newViewContent = "";
             wd = this.wd(this.date.browse.getUTCDay());
             d = this.date.browse.getUTCDate();
@@ -247,3 +331,4 @@
         }
 
         var c = new Cal();
+        generateYearData(10);

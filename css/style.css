@@ -20,6 +20,9 @@
 .calendar .view {
     position: relative;
     float: left;
+    height: 315px;
+    width: 280px;
+    overflow: auto;
 }
 .calendar .nav {
     position: absolute;
@@ -76,6 +79,11 @@
     width: 100%;
     text-align: center;
     background-color: cornflowerblue;
+    color: white;
+}
+
+.calendar .head.year-title span{
+    padding: 0 4em;
 }
 .calendar .head span {
     cursor: pointer;
